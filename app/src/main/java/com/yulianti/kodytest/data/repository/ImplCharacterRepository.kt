@@ -20,7 +20,11 @@ class ImplCharacterRepository @Inject constructor(
 //        if (local != null) {
 //            return local
 //        } else {
-            return networkDataSource.fetchCharacters(name, limit, offset)
+        return networkDataSource.fetchCharacters(name, limit, offset)
 //        }
+    }
+
+    override suspend fun getCharacterDetail(id: Int): CustomResult<Character, DataError> {
+        return networkDataSource.fetchCharacterDetail(id)
     }
 }

@@ -6,4 +6,5 @@ import com.yulianti.kodytest.data.model.DataError
 
 interface CharacterRepository {
     suspend fun getCharacter(name: String?, limit: Int, offset: Int): CustomResult<List<Character>, DataError>
+    suspend fun getCharacterDetail(id: Int): CustomResult<Character, DataError>
 }

@@ -23,9 +23,29 @@ class NetworkCharacterDataSource @Inject constructor(private val service: Charac
                 BuildConfig.PUBLIC_KEY,
                 MD5Util.md5(timestamp + BuildConfig.PRIVATE_KEY + BuildConfig.PUBLIC_KEY)
             ).data.results.map {
-                Character(it.name)
+                Character(it.id, it.name, it.thumbnail.path + "." + it.thumbnail.extension, it.description)
             }
             return CustomResult.Success(result)
+        } catch (e: HttpException) {
+            when (e.code()) {
+                408 -> CustomResult.Error(DataError.Network.REQUEST_TIMEOUT)
+                413 -> CustomResult.Error(DataError.Network.PAYLOAD_TOO_LARGE)
+                else -> CustomResult.Error(DataError.Network.UNKNOWN)
+            }
+        }
+    }
+
+    override suspend fun fetchCharacterDetail(characterId: Int): CustomResult<Character, DataError> {
+        val timestamp = System.currentTimeMillis().toString()
+        return try {
+            val result = service.getCharacterDetail(
+                characterId,
+                timestamp,
+                BuildConfig.PUBLIC_KEY,
+                MD5Util.md5(timestamp + BuildConfig.PRIVATE_KEY + BuildConfig.PUBLIC_KEY)
+            ).data.results.first()
+            val newResult = Character(result.id, result.name, result.thumbnail.path + "." + result.thumbnail.extension, result.description)
+            return CustomResult.Success(newResult)
         } catch (e: HttpException) {
             when (e.code()) {
                 408 -> CustomResult.Error(DataError.Network.REQUEST_TIMEOUT)

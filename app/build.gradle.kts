@@ -6,6 +6,8 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    id("androidx.navigation.safeargs.kotlin")
+    kotlin("plugin.serialization") version "2.0.21"
 }
 
 android {
@@ -69,6 +71,10 @@ dependencies {
     implementation ("androidx.room:room-runtime:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
+    implementation("com.github.bumptech.glide:glide:4.15.1")
+    kapt("com.github.bumptech.glide:compiler:4.15.1")
+    implementation("androidx.recyclerview:recyclerview:1.2.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
 }
 
 fun fetchKeys(): Pair<String, String> {

@@ -17,6 +17,9 @@ class LocalCharacterDataSource @Inject constructor(
         return try {
             val result = characterDao.getAllCharacters().map {
                 Character(
+                    0,
+                    it.name,
+                    it.name,
                     it.name
                 )
             }
@@ -33,7 +36,9 @@ class LocalCharacterDataSource @Inject constructor(
     ): CustomResult<List<Character>, DataError> {
         return try {
             val result = characterDao.getAllCharacters().map {
-                Character(
+                Character(0,
+                    it.name,
+                    it.name,
                     it.name
                 )
             }

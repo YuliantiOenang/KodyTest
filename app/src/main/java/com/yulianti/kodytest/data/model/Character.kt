@@ -82,5 +82,8 @@ data class ItemXXX(
     val type: String
 )
 data class Character (
-    val name: String
+    val id: Int,
+    val name: String,
+    val coverUrl: String,
+    val description: String
 )
