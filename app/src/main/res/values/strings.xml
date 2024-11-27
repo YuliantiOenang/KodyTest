@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">KodyTest</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_search">Search</string>
     <!-- Strings used for fragments for navigation -->
     <string name="character_list">Character List</string>
     <string name="character_detail">Character Detail</string>
+    <string name="search_hint">Enter your character here!</string>
 </resources>

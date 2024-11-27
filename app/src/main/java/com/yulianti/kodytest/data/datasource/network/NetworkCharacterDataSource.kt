@@ -19,9 +19,13 @@ class NetworkCharacterDataSource @Inject constructor(private val service: Charac
         val timestamp = System.currentTimeMillis().toString()
         return try {
             val result = service.getCharacter(
-                timestamp,
-                BuildConfig.PUBLIC_KEY,
-                MD5Util.md5(timestamp + BuildConfig.PRIVATE_KEY + BuildConfig.PUBLIC_KEY)
+                toMap(
+                    name,
+                    timestamp,
+                    BuildConfig.PUBLIC_KEY,
+                    MD5Util.md5(timestamp + BuildConfig.PRIVATE_KEY + BuildConfig.PUBLIC_KEY),
+                    0,0
+                )
             ).data.results.map {
                 Character(it.id, it.name, it.thumbnail.path + "." + it.thumbnail.extension, it.description)
             }
@@ -32,6 +36,28 @@ class NetworkCharacterDataSource @Inject constructor(private val service: Charac
                 413 -> CustomResult.Error(DataError.Network.PAYLOAD_TOO_LARGE)
                 else -> CustomResult.Error(DataError.Network.UNKNOWN)
             }
+        }
+    }
+
+    fun toMap(name: String?,
+              ts: String,
+              apiKey: String,
+              hash: String,
+              limit: Int,
+              offset: Int): MutableMap<String, String> {
+        return if (name == null || name.isEmpty()) {
+            mutableMapOf(
+                "ts" to ts,
+                "apikey" to apiKey,
+                "hash" to hash,
+            )
+        } else {
+            mutableMapOf(
+                "name" to name,
+                "ts" to ts,
+                "apikey" to apiKey,
+                "hash" to hash,
+            )
         }
     }
 

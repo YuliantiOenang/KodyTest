@@ -20,10 +20,10 @@ class CharacterListViewModel @Inject constructor(
     private val _characterFlow = MutableStateFlow<CharacterUiState?>(null)
     val characterFlow: StateFlow<CharacterUiState?> = _characterFlow.asStateFlow()
 
-    fun getCharacter() {
+    fun getCharacter(keyword: String? = null) {
         viewModelScope.launch {
             _characterFlow.emit(CharacterUiState.Loading)
-            val result = repository.getCharacter(null, 0,10)
+            val result = repository.getCharacter(keyword, 0,10)
             when(result) {
                 is CustomResult.Error -> {
                     val errorMessage = result.error.asUiText()

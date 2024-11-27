@@ -33,6 +33,11 @@ class CharacterListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCharacterListBinding.inflate(inflater, container, false)
+        val keyword = arguments?.getString("keyword")
+        if (keyword?.isNotEmpty() == true) {
+            viewModel.getCharacter(keyword)
+        }
+
         return binding.root
 
     }
