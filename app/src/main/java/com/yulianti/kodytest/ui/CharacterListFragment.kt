@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -27,65 +28,70 @@ class CharacterListFragment : Fragment() {
     private val viewModel: CharacterListViewModel by viewModels()
 
     private var _adapter: CharacterListAdapter? = null
+    private lateinit var scrollListener: RecyclerView.OnScrollListener
+
+    private val keyword: String?
+        get() {
+            val keyword = arguments?.getString("keyword")
+            return keyword
+        }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCharacterListBinding.inflate(inflater, container, false)
-        val keyword = arguments?.getString("keyword")
-        if (keyword?.isNotEmpty() == true) {
-            viewModel.getCharacter(keyword)
-        }
-
         return binding.root
 
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-        if (_adapter == null) {
-            viewModel.getCharacter()
+        if (_adapter == null || keyword?.isNotEmpty() == true) {
+            viewModel.getCharacter(keyword)
         }
         binding.recyclerView.apply {
             adapter = this@CharacterListFragment.getAdapter()
         }
         viewLifecycleOwner.lifecycleScope.launch {
-            // Collect the Flow when the lifecycle is at least STARTED
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.characterFlow.collect { data ->
-                    if (data is CharacterListViewModel.CharacterUiState.Loading) {
+                viewModel.characterFlow
+                    .collect { data ->
+                    if (data?.isLoading == true) {
                         binding.loadingView.show()
                     } else {
-                        if (data is CharacterListViewModel.CharacterUiState.Success) {
-                            _adapter?.submitList(data.feed)
+                        if (data?.items?.items?.isNotEmpty() == true) {
+                            println("yulianti items not empty")
+                            _adapter?.submitList(data.items.items)
                             binding.loadingView.hide()
                             binding.recyclerView.visibility = View.VISIBLE
-                        } else if (data is CharacterListViewModel.CharacterUiState.Error) {
-                            println("yulianti error ${data.error}")
+                        } else if (data?.error != null && data.error != 0) {
+                            Toast.makeText(requireContext(), requireContext().getString(data.error), Toast.LENGTH_SHORT).show()
+                            println("yulianti error dari list ${data.error}")
                         }
                     }
                 }
             }
         }
 
-        binding.recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        scrollListener = object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                (recyclerView.layoutManager as? LinearLayoutManager)?.let {
-                    val lastVisibleItemPosition: Int = it.findLastVisibleItemPosition()
-                    val totalItemCount = it.itemCount
-
-//                    if (lastVisibleItemPosition + 1 == totalItemCount && !viewModel.isLoading() && !viewModel.isAllDataLoaded()) {
-//                        viewModel.loadMore()
-//                    }
+                (recyclerView.layoutManager as? LinearLayoutManager)?.let { layoutManager ->
+                    val lastVisibleItemPosition: Int = layoutManager.findLastCompletelyVisibleItemPosition()
+                    val totalItemCount = layoutManager.itemCount
+                    if (lastVisibleItemPosition + 1 == totalItemCount && !(viewModel.characterFlow.value?.isLoading == true) && !viewModel.isAllDataLoaded()) {
+                        println("yulianti load more")
+                        viewModel.loadMore(keyword)
+                    }
                 }
             }
-        })
+        }
+        binding.recyclerView.addOnScrollListener(scrollListener)
     }
 
     override fun onDestroyView() {
+        binding.recyclerView.removeOnScrollListener(scrollListener)
         super.onDestroyView()
         _binding = null
     }

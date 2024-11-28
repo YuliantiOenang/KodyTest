@@ -5,6 +5,7 @@ import com.yulianti.kodytest.data.datasource.network.NetworkDataSource
 import com.yulianti.kodytest.data.model.Character
 import com.yulianti.kodytest.data.model.CustomResult
 import com.yulianti.kodytest.data.model.DataError
+import com.yulianti.kodytest.data.model.PaginatedResult
 import javax.inject.Inject
 
 class ImplCharacterRepository @Inject constructor(
@@ -15,7 +16,7 @@ class ImplCharacterRepository @Inject constructor(
         name: String?,
         limit: Int,
         offset: Int
-    ): CustomResult<List<Character>, DataError> {
+    ): CustomResult<PaginatedResult<Character>, DataError> {
         val local = localDataSource.getCharacter(name, limit, offset)
 //        if (local != null) {
 //            return local

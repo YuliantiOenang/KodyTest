@@ -58,7 +58,7 @@ class CharacterListAdapter: ListAdapter<Character, CharacterListAdapter.Characte
 
     class DiffCallback: DiffUtil.ItemCallback<Character>() {
         override fun areItemsTheSame(oldItem: Character, newItem: Character): Boolean {
-            return oldItem.coverUrl == newItem.coverUrl
+            return oldItem == newItem
         }
 
         override fun areContentsTheSame(oldItem: Character, newItem: Character): Boolean {

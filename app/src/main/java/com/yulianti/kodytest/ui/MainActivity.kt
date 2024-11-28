@@ -63,7 +63,8 @@ class MainActivity : AppCompatActivity() {
                 return true
             }
             android.R.id.home -> {
-                performSearch("")
+//                performSearch("")
+                onSupportNavigateUp()
                 binding.searchView.setQuery("", false)
                 supportActionBar!!.setDisplayHomeAsUpEnabled(false)
                 binding.toolbar.menu.findItem(R.id.action_search).setVisible(true)

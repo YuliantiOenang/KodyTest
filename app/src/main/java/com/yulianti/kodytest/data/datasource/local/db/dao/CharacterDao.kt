@@ -11,6 +11,9 @@ interface CharacterDao {
     @Insert
     suspend fun insertCharacter(user: CharacterEntity)
 
+    @Insert
+    suspend fun insertAllCharacter(users: List<CharacterEntity>)
+
     @Query("SELECT * FROM characters")
     suspend fun getAllCharacters(): List<CharacterEntity>
 

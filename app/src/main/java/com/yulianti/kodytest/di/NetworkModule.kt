@@ -59,4 +59,8 @@ object NetworkModule {
     fun provideCharacterDao(appDatabase: AppDatabase): CharacterDao {
         return appDatabase.characterDao()
     }
+
+    @Provides
+    @RequestLimit
+    fun provideRequestLimit(): Int = 20
 }

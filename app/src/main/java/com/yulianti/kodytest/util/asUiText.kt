@@ -1,6 +1,5 @@
 package com.yulianti.kodytest.util
 
-import com.yulianti.kodytest.R
 import com.yulianti.kodytest.data.model.DataError
 
 
@@ -23,7 +22,3 @@ fun DataError.asUiText(): Int {
 
     }
 }
-
-//fun Result.Error<*, DataError>.asErrorUiText(): UiText {
-//    return error.asUiText()
-//}

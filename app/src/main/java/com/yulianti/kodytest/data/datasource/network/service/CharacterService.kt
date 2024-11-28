@@ -9,7 +9,7 @@ import retrofit2.http.QueryMap
 interface CharacterService {
     @GET("characters")
     suspend fun getCharacter(
-        @QueryMap params: MutableMap<String, String>
+        @QueryMap params: MutableMap<String, Any>
     ): CharacterDataWrapper
 
     @GET("characters/{characterId}")

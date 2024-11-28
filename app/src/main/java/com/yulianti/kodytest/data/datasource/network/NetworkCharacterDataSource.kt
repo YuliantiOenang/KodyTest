@@ -5,6 +5,7 @@ import com.yulianti.kodytest.data.model.Character
 import com.yulianti.kodytest.data.model.CustomResult
 import com.yulianti.kodytest.data.model.DataError
 import com.yulianti.kodytest.data.datasource.network.service.CharacterService
+import com.yulianti.kodytest.data.model.PaginatedResult
 import com.yulianti.kodytest.util.MD5Util
 import retrofit2.HttpException
 import javax.inject.Inject
@@ -15,21 +16,22 @@ class NetworkCharacterDataSource @Inject constructor(private val service: Charac
         name: String?,
         limit: Int,
         offset: Int
-    ): CustomResult<List<Character>, DataError> {
+    ): CustomResult<PaginatedResult<Character>, DataError> {
         val timestamp = System.currentTimeMillis().toString()
         return try {
-            val result = service.getCharacter(
+            val allResult = service.getCharacter(
                 toMap(
                     name,
                     timestamp,
                     BuildConfig.PUBLIC_KEY,
                     MD5Util.md5(timestamp + BuildConfig.PRIVATE_KEY + BuildConfig.PUBLIC_KEY),
-                    0,0
+                    limit,offset
                 )
-            ).data.results.map {
+            )
+            val result = allResult.data.results.map {
                 Character(it.id, it.name, it.thumbnail.path + "." + it.thumbnail.extension, it.description)
             }
-            return CustomResult.Success(result)
+            return CustomResult.Success(PaginatedResult(result, allResult.data.total, allResult.data.offset, allResult.data.count))
         } catch (e: HttpException) {
             when (e.code()) {
                 408 -> CustomResult.Error(DataError.Network.REQUEST_TIMEOUT)
@@ -44,12 +46,14 @@ class NetworkCharacterDataSource @Inject constructor(private val service: Charac
               apiKey: String,
               hash: String,
               limit: Int,
-              offset: Int): MutableMap<String, String> {
+              offset: Int): MutableMap<String, Any> {
         return if (name == null || name.isEmpty()) {
             mutableMapOf(
                 "ts" to ts,
                 "apikey" to apiKey,
                 "hash" to hash,
+                "limit" to limit,
+                "offset" to offset
             )
         } else {
             mutableMapOf(
@@ -57,6 +61,8 @@ class NetworkCharacterDataSource @Inject constructor(private val service: Charac
                 "ts" to ts,
                 "apikey" to apiKey,
                 "hash" to hash,
+                "limit" to limit,
+                "offset" to offset
             )
         }
     }

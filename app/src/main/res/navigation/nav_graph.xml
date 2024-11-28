@@ -17,7 +17,8 @@
 
         <action
             android:id="@+id/action_listFragment_to_search"
-            app:destination="@id/CharacterListFragment"/>
+            app:destination="@id/CharacterListFragment"
+            app:launchSingleTop="false"/>
         <argument
             android:name="keyword"
             app:argType="string" />
@@ -27,15 +28,12 @@
         android:name="com.yulianti.kodytest.ui.CharacterDetailFragment"
         android:label="@string/character_detail"
         tools:layout="@layout/fragment_character_detail">
-
-        <action
-            android:id="@+id/action_SecondFragment_to_FirstFragment"
-            app:destination="@id/CharacterListFragment" />
         <argument
             android:name="itemId"
             app:argType="integer" />
         <action
             android:id="@+id/action_DetailFragment_to_search"
-            app:destination="@id/CharacterListFragment"/>
+            app:destination="@id/CharacterListFragment"
+            app:launchSingleTop="false"/>
     </fragment>
 </navigation>
