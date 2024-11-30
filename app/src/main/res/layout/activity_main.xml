@@ -15,20 +15,7 @@
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
-
-            <androidx.appcompat.widget.SearchView
-                android:id="@+id/searchView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:visibility="gone"
-                app:autoShowKeyboard="true"
-                app:backHandlingEnabled="true"
-                app:closeIcon="@drawable/ic_close"
-                app:hideNavigationIcon="false"
-                app:iconifiedByDefault="false"
-                app:queryHint="@string/search_hint" />
-        </com.google.android.material.appbar.MaterialToolbar>
+            android:layout_height="?attr/actionBarSize"></com.google.android.material.appbar.MaterialToolbar>
 
     </com.google.android.material.appbar.AppBarLayout>
 

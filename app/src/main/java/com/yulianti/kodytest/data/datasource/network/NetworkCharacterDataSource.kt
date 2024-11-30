@@ -25,29 +25,45 @@ class NetworkCharacterDataSource @Inject constructor(private val service: Charac
                     timestamp,
                     BuildConfig.PUBLIC_KEY,
                     MD5Util.md5(timestamp + BuildConfig.PRIVATE_KEY + BuildConfig.PUBLIC_KEY),
-                    limit,offset
+                    limit, offset
                 )
             )
             val result = allResult.data.results.map {
-                Character(it.id, it.name, it.thumbnail.path + "." + it.thumbnail.extension, it.description)
+                Character(
+                    it.id,
+                    it.name,
+                    it.thumbnail.path + "." + it.thumbnail.extension,
+                    it.description
+                )
             }
-            return CustomResult.Success(PaginatedResult(result, allResult.data.total, allResult.data.offset, allResult.data.count))
+            CustomResult.Success(
+                PaginatedResult(
+                    result,
+                    allResult.data.total,
+                    allResult.data.offset,
+                    allResult.data.count
+                )
+            )
         } catch (e: HttpException) {
             when (e.code()) {
                 408 -> CustomResult.Error(DataError.Network.REQUEST_TIMEOUT)
                 413 -> CustomResult.Error(DataError.Network.PAYLOAD_TOO_LARGE)
                 else -> CustomResult.Error(DataError.Network.UNKNOWN)
             }
+        } catch (e: Exception) {
+            CustomResult.Error(DataError.Network.UNKNOWN)
         }
     }
 
-    fun toMap(name: String?,
-              ts: String,
-              apiKey: String,
-              hash: String,
-              limit: Int,
-              offset: Int): MutableMap<String, Any> {
-        return if (name == null || name.isEmpty()) {
+    fun toMap(
+        name: String?,
+        ts: String,
+        apiKey: String,
+        hash: String,
+        limit: Int,
+        offset: Int
+    ): MutableMap<String, Any> {
+        return if (name.isNullOrEmpty()) {
             mutableMapOf(
                 "ts" to ts,
                 "apikey" to apiKey,
@@ -76,14 +92,21 @@ class NetworkCharacterDataSource @Inject constructor(private val service: Charac
                 BuildConfig.PUBLIC_KEY,
                 MD5Util.md5(timestamp + BuildConfig.PRIVATE_KEY + BuildConfig.PUBLIC_KEY)
             ).data.results.first()
-            val newResult = Character(result.id, result.name, result.thumbnail.path + "." + result.thumbnail.extension, result.description)
-            return CustomResult.Success(newResult)
+            val newResult = Character(
+                result.id,
+                result.name,
+                result.thumbnail.path + "." + result.thumbnail.extension,
+                result.description
+            )
+            CustomResult.Success(newResult)
         } catch (e: HttpException) {
             when (e.code()) {
                 408 -> CustomResult.Error(DataError.Network.REQUEST_TIMEOUT)
                 413 -> CustomResult.Error(DataError.Network.PAYLOAD_TOO_LARGE)
                 else -> CustomResult.Error(DataError.Network.UNKNOWN)
             }
+        } catch (e: Exception) {
+            CustomResult.Error(DataError.Network.UNKNOWN)
         }
     }
 }

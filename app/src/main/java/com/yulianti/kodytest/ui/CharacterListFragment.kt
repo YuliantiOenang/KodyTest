@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -16,6 +17,7 @@ import com.yulianti.kodytest.databinding.FragmentCharacterListBinding
 import com.yulianti.kodytest.ui.viewmodel.CharacterListViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 /**
  * A simple [Fragment] subclass as the default destination in the navigation.
@@ -30,10 +32,10 @@ class CharacterListFragment : Fragment() {
     private var _adapter: CharacterListAdapter? = null
     private lateinit var scrollListener: RecyclerView.OnScrollListener
 
-    private val keyword: String?
-        get() {
-            val keyword = arguments?.getString("keyword")
-            return keyword
+    private var keyword: String? = null
+        set(value) {
+            viewModel.getCharacter(value)
+            field = value
         }
 
     override fun onCreateView(
@@ -47,8 +49,8 @@ class CharacterListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (_adapter == null || keyword?.isNotEmpty() == true) {
-            viewModel.getCharacter(keyword)
+        if (_adapter == null) {
+            viewModel.getCharacter()
         }
         binding.recyclerView.apply {
             adapter = this@CharacterListFragment.getAdapter()
@@ -60,19 +62,40 @@ class CharacterListFragment : Fragment() {
                     if (data?.isLoading == true) {
                         binding.loadingView.show()
                     } else {
-                        if (data?.items?.items?.isNotEmpty() == true) {
-                            println("yulianti items not empty")
-                            _adapter?.submitList(data.items.items)
-                            binding.loadingView.hide()
-                            binding.recyclerView.visibility = View.VISIBLE
-                        } else if (data?.error != null && data.error != 0) {
+                        binding.loadingView.hide()
+                        if (data?.error != null && data.error != 0) {
                             Toast.makeText(requireContext(), requireContext().getString(data.error), Toast.LENGTH_SHORT).show()
                             println("yulianti error dari list ${data.error}")
+                        } else {
+                            println("yulianti items not empty")
+                            _adapter?.submitList(data?.items?.items)
+                            binding.recyclerView.visibility = View.VISIBLE
                         }
                     }
                 }
             }
         }
+
+
+        binding.searchView.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String): Boolean {
+                performSearch(query)
+                return true
+            }
+
+            override fun onQueryTextChange(newText: String): Boolean {
+                return false
+            }
+        })
+
+        binding.searchView.setOnCloseListener(object : SearchView.OnCloseListener{
+            override fun onClose(): Boolean {
+                println("yulianti close clicked")
+                keyword = ""
+                return true
+            }
+        })
 
         scrollListener = object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -99,5 +122,10 @@ class CharacterListFragment : Fragment() {
     private fun getAdapter(): CharacterListAdapter {
         if (_adapter == null) _adapter = CharacterListAdapter()
         return requireNotNull(_adapter)
+    }
+
+    private fun performSearch(query: String) {
+        Timber.d("yulianti perform search ${query}")
+        keyword = query
     }
 }

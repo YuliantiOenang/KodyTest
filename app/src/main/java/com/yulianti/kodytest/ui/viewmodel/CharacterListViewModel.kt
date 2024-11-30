@@ -30,6 +30,7 @@ class CharacterListViewModel @Inject constructor(
         viewModelScope.launch {
             _characterFlow.value = CharacterUiState(isLoading = true)
 
+            println("yulianti keyword dari view model ${keyword}")
             val result = repository.getCharacter(keyword, requestLimit, offset)
             _characterFlow.value = CharacterUiState(isLoading = false)
             when(result) {
@@ -39,9 +40,10 @@ class CharacterListViewModel @Inject constructor(
                 }
                 is CustomResult.Success -> {
                     currentOffset = requestLimit
-                    totalRequest += 1
-                    servingItem += result.data.items.size
+                    totalRequest = 1
+                    servingItem = result.data.items.size
                     _characterFlow.value = CharacterUiState(items = result.data)
+
                 }
             }
         }
@@ -67,6 +69,7 @@ class CharacterListViewModel @Inject constructor(
                     }
                 }
                 is CustomResult.Success -> {
+                    servingItem += result.data.items.size
                     totalRequest += 1
                     val previousData = _characterFlow.value?.items ?: PaginatedResult(listOf(), 0, 0,0)
                     val newData = previousData.items + result.data.items

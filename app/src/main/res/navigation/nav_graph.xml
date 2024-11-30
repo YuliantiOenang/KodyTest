@@ -14,14 +14,6 @@
         <action
             android:id="@+id/action_listFragment_to_detailFragment"
             app:destination="@id/CharacterDetailFragment"/>
-
-        <action
-            android:id="@+id/action_listFragment_to_search"
-            app:destination="@id/CharacterListFragment"
-            app:launchSingleTop="false"/>
-        <argument
-            android:name="keyword"
-            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/CharacterDetailFragment"
@@ -31,9 +23,5 @@
         <argument
             android:name="itemId"
             app:argType="integer" />
-        <action
-            android:id="@+id/action_DetailFragment_to_search"
-            app:destination="@id/CharacterListFragment"
-            app:launchSingleTop="false"/>
     </fragment>
 </navigation>

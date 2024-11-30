@@ -1,50 +1,56 @@
 package com.yulianti.kodytest.data.datasource.local
 
+import android.database.sqlite.SQLiteFullException
 import com.yulianti.kodytest.data.datasource.local.db.dao.CharacterDao
+import com.yulianti.kodytest.data.datasource.local.db.entities.CharacterEntity
 import com.yulianti.kodytest.data.model.Character
 import com.yulianti.kodytest.data.model.CustomResult
 import com.yulianti.kodytest.data.model.DataError
+import com.yulianti.kodytest.data.model.PaginatedResult
 import javax.inject.Inject
 
 class LocalCharacterDataSource @Inject constructor(
     private val characterDao: CharacterDao
 ) {
-    suspend fun getCharacter(
-        name: String?,
-        limit: Int,
-        offset: Int
+    suspend fun getAllCharacter(
+        name: String?
     ): CustomResult<List<Character>, DataError> {
         return try {
-            val result = characterDao.getAllCharacters().map {
-                Character(
-                    0,
-                    it.name,
-                    it.name,
-                    it.name
-                )
+            val result = if (name?.isNotEmpty() == true) {
+                characterDao.getCharacterByQuery(name).map {
+                    Character(
+                        it.id,
+                        it.name,
+                        it.coverUrl,
+                        it.description
+                    )
+                }
+            } else {
+                characterDao.getAllCharacters().map {
+                    Character(
+                        it.id,
+                        it.name,
+                        it.coverUrl,
+                        it.description
+                    )
+                }
             }
             CustomResult.Success(result)
         } catch(e: Exception) {
-            CustomResult.Error(DataError.Local.DISK_FULL)
+            CustomResult.Error(DataError.Local.UNKNOWN)
         }
     }
 
     suspend fun saveCharacter(
-        name: String?,
-        limit: Int,
-        offset: Int
+        characters: PaginatedResult<Character>
     ): CustomResult<List<Character>, DataError> {
         return try {
-            val result = characterDao.getAllCharacters().map {
-                Character(0,
-                    it.name,
-                    it.name,
-                    it.name
-                )
-            }
-            CustomResult.Success(result)
-        } catch(e: Exception) {
+            characterDao.insertAllCharacter(characters.items.map { CharacterEntity(it.id, it.name, it.coverUrl, it.description) })
+            CustomResult.Success(listOf())
+        }  catch (e: SQLiteFullException) {
             CustomResult.Error(DataError.Local.DISK_FULL)
+        } catch (e: Exception) {
+            CustomResult.Error(DataError.Local.UNKNOWN)
         }
     }
 }
