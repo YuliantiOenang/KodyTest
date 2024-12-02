@@ -88,7 +88,7 @@ class CharacterListViewModelTest {
 
         viewModel.characterFlow.test {
             val state = awaitItem()
-            assertEquals(R.string.unknown, state?.error)
+            assertEquals((errorResult as CustomResult.Error).error, state?.error)
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -119,7 +119,7 @@ class CharacterListViewModelTest {
 
         viewModel.characterFlow.test {
             val state = awaitItem()
-            assertEquals((errorResult as CustomResult.Error).error.asUiText(),state?.error)
+            assertEquals((errorResult as CustomResult.Error).error, state?.error)
             cancelAndIgnoreRemainingEvents()
         }
     }

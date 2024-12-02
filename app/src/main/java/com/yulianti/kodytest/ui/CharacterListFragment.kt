@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.yulianti.kodytest.databinding.FragmentCharacterListBinding
 import com.yulianti.kodytest.ui.viewmodel.CharacterListViewModel
+import com.yulianti.kodytest.util.asUiText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import timber.log.Timber
@@ -63,8 +64,8 @@ class CharacterListFragment : Fragment() {
                         binding.loadingView.show()
                     } else {
                         binding.loadingView.hide()
-                        if (data?.error != null && data.error != 0) {
-                            Toast.makeText(requireContext(), requireContext().getString(data.error), Toast.LENGTH_SHORT).show()
+                        if (data?.error != null) {
+                            Toast.makeText(requireContext(), requireContext().getString(data.error.asUiText()), Toast.LENGTH_SHORT).show()
                             println("yulianti error dari list ${data.error}")
                         } else {
                             println("yulianti items not empty")

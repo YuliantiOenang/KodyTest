@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yulianti.kodytest.data.model.Character
 import com.yulianti.kodytest.data.model.CustomResult
+import com.yulianti.kodytest.data.model.DataError
 import com.yulianti.kodytest.data.model.PaginatedResult
 import com.yulianti.kodytest.data.repository.CharacterRepository
 import com.yulianti.kodytest.di.RequestLimit
@@ -34,8 +35,7 @@ class CharacterListViewModel @Inject constructor(
 
             when (val result = repository.getCharacter(keyword, getRequestLimit(), offset)) {
                 is CustomResult.Error -> {
-                    val errorMessage = result.error.asUiText()
-                    _characterFlow.value = CharacterUiState(isLoading = false, error = errorMessage)
+                    _characterFlow.value = CharacterUiState(isLoading = false, error = result.error)
                 }
 
                 is CustomResult.Success -> {
@@ -59,10 +59,9 @@ class CharacterListViewModel @Inject constructor(
             val result = repository.getCharacter(keyword, getRequestLimit(), currentOffset)
             when (result) {
                 is CustomResult.Error -> {
-                    val errorMessage = result.error.asUiText()
                     _characterFlow.update { currentState ->
                         currentState?.copy(
-                            error = errorMessage
+                            error = result.error
                         )
                     }
                 }
@@ -112,6 +111,6 @@ class CharacterListViewModel @Inject constructor(
     data class CharacterUiState(
         val items: PaginatedResult<Character> = PaginatedResult(listOf(), 0, 0, 0),
         val isLoading: Boolean = false,
-        val error: Int = 0
+        val error: DataError? = null
     )
 }
