@@ -21,33 +21,31 @@ class NetworkCharacterDataSource @Inject constructor(private val service: Charac
     ): CustomResult<PaginatedResult<Character>, DataError> {
         val timestamp = System.currentTimeMillis().toString()
         return try {
-            withContext(Dispatchers.IO) {
-                val allResult = service.getCharacter(
-                    toMap(
-                        name,
-                        timestamp,
-                        BuildConfig.PUBLIC_KEY,
-                        MD5Util.md5(timestamp + BuildConfig.PRIVATE_KEY + BuildConfig.PUBLIC_KEY),
-                        limit, offset
-                    )
+            val allResult = service.getCharacter(
+                toMap(
+                    name,
+                    timestamp,
+                    BuildConfig.PUBLIC_KEY,
+                    MD5Util.md5(timestamp + BuildConfig.PRIVATE_KEY + BuildConfig.PUBLIC_KEY),
+                    limit, offset
                 )
-                val result = allResult.data.results.map {
-                    Character(
-                        it.id,
-                        it.name,
-                        it.thumbnail.path + "." + it.thumbnail.extension,
-                        it.description
-                    )
-                }
-                CustomResult.Success(
-                    PaginatedResult(
-                        result,
-                        allResult.data.total,
-                        allResult.data.offset,
-                        allResult.data.count
-                    )
+            )
+            val result = allResult.data.results.map {
+                Character(
+                    it.id,
+                    it.name,
+                    it.thumbnail.path + "." + it.thumbnail.extension,
+                    it.description
                 )
             }
+            CustomResult.Success(
+                PaginatedResult(
+                    result,
+                    allResult.data.total,
+                    allResult.data.offset,
+                    allResult.data.count
+                )
+            )
         } catch (e: HttpException) {
             when (e.code()) {
                 408 -> CustomResult.Error(DataError.Network.REQUEST_TIMEOUT)

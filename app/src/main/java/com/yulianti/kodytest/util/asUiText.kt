@@ -13,7 +13,7 @@ fun DataError.asUiText(): Int {
 
         DataError.Network.PAYLOAD_TOO_LARGE ->  4
 
-        DataError.Network.SERVER_ERROR ->  5
+        DataError.Network.SERVER_ERROR ->  R.string.unknown
 
         DataError.Network.SERIALIZATION ->  6
 

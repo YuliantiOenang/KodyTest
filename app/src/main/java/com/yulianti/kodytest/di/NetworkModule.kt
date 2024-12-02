@@ -4,15 +4,20 @@ import android.app.Application
 import android.content.Context
 import com.yulianti.kodytest.data.datasource.local.db.AppDatabase
 import com.yulianti.kodytest.data.datasource.local.db.dao.CharacterDao
+import com.yulianti.kodytest.data.datasource.network.NetworkChecker
+import com.yulianti.kodytest.data.datasource.network.NetworkCheckerImpl
 import com.yulianti.kodytest.data.datasource.network.service.CharacterService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import javax.inject.Named
 import javax.inject.Singleton
 
 @Module
@@ -63,4 +68,16 @@ object NetworkModule {
     @Provides
     @RequestLimit
     fun provideRequestLimit(): Int = 20
+
+    @Provides
+    @Singleton
+    fun getNetworkChecker(networkCheckerImpl: NetworkCheckerImpl): NetworkChecker {
+        return networkCheckerImpl
+    }
+
+    @Provides
+    @Named("Dispatcher.IO")
+    fun provideIoDispatcher(): CoroutineDispatcher {
+        return Dispatchers.IO
+    }
 }

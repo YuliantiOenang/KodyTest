@@ -1,14 +1,23 @@
 import app.cash.turbine.test
+import com.yulianti.kodytest.R
 import com.yulianti.kodytest.data.model.CustomResult
 import com.yulianti.kodytest.data.repository.CharacterRepository
+import com.yulianti.kodytest.errorResult
 import com.yulianti.kodytest.successCharacterListResult
+import com.yulianti.kodytest.successLoadMoreResult
 import com.yulianti.kodytest.ui.viewmodel.CharacterListViewModel
+import com.yulianti.kodytest.util.asUiText
 import io.mockk.coEvery
 import io.mockk.mockk
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
+import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertEquals
+import org.junit.Before
 import org.junit.Test
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -16,25 +25,102 @@ class CharacterListViewModelTest {
 
     private val repository: CharacterRepository = mockk()
     private val testDispatcher = StandardTestDispatcher()
-    private val viewModel = CharacterListViewModel(repository, 10)
+    private val requestLimit = 10
+    private val viewModel = CharacterListViewModel(repository, requestLimit)
+
+    @Before
+    fun setUp() {
+        Dispatchers.setMain(testDispatcher)
+    }
+
+    @After
+    fun tearDown() {
+        Dispatchers.resetMain()
+    }
 
     @Test
-    fun `test state flow emits loading and success`() = runTest {
-        // Given
-        coEvery { repository.getCharacter(null, 0, 0) } returns successCharacterListResult
+    fun `test state flow emits loading and success`() = runTest(testDispatcher) {
+        coEvery { repository.getCharacter(any(), any(), any()) } returns successCharacterListResult
+        viewModel.getCharacter()
 
-        // When & Then
         viewModel.characterFlow.test {
-            // Initial state
+            assertEquals(null, awaitItem())
             assertEquals(CharacterListViewModel.CharacterUiState(isLoading = true), awaitItem())
 
-            // Advance time to let coroutine execute
             testDispatcher.scheduler.advanceUntilIdle()
+            assertEquals(
+                CharacterListViewModel.CharacterUiState(
+                    items = (successCharacterListResult as CustomResult.Success).data,
+                    isLoading = false
+                ),
+                awaitItem()
+            )
 
-            // After fetching data
-            assertEquals(CharacterListViewModel.CharacterUiState(items = (successCharacterListResult as CustomResult.Success).data), awaitItem())
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
 
-//            cancelAndIgnoreRemainingEvents()
+    @Test
+    fun `test load more appends data on success`() = runTest(testDispatcher) {
+        coEvery { repository.getCharacter(any(), any(), 0) } returns successCharacterListResult
+        coEvery { repository.getCharacter(any(), any(), 1) } returns successLoadMoreResult
+
+        viewModel.getCharacter()
+        viewModel.loadMore()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.characterFlow.test {
+            val state = awaitItem()
+            assertEquals(2, state?.items?.items?.size)
+            assertEquals(false, state?.isLoading)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `test load more handles error`() = runTest(testDispatcher) {
+        coEvery { repository.getCharacter(any(), any(), 0) } returns successCharacterListResult
+        coEvery { repository.getCharacter(any(), any(), 1) } returns errorResult
+
+        viewModel.getCharacter()
+        viewModel.loadMore()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.characterFlow.test {
+            val state = awaitItem()
+            assertEquals(R.string.unknown, state?.error)
+            cancelAndIgnoreRemainingEvents()
+        }
+    }
+
+    @Test
+    fun `test isAllDataLoaded returns correct value`() = runTest(testDispatcher) {
+        coEvery { repository.getCharacter(any(), any(), any()) } returns successCharacterListResult
+
+        viewModel.getCharacter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals(false, viewModel.isAllDataLoaded())
+
+        coEvery { repository.getCharacter(any(), any(), any()) } returns successLoadMoreResult
+        viewModel.loadMore()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals(true, viewModel.isAllDataLoaded())
+    }
+
+
+    @Test
+    fun `test state flow emits error on initial load`() = runTest(testDispatcher) {
+        coEvery { repository.getCharacter(any(), any(), any()) } returns errorResult
+
+        viewModel.getCharacter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        viewModel.characterFlow.test {
+            val state = awaitItem()
+            assertEquals((errorResult as CustomResult.Error).error.asUiText(),state?.error)
+            cancelAndIgnoreRemainingEvents()
         }
     }
 }
