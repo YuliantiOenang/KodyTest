@@ -5,19 +5,19 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.CenterInside
-import com.bumptech.glide.load.resource.bitmap.FitCenter
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.yulianti.kodytest.databinding.FragmentCharacterDetailBinding
 import com.yulianti.kodytest.ui.viewmodel.CharacterDetailViewModel
+import com.yulianti.kodytest.util.asUiText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -42,13 +42,12 @@ class CharacterDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycleScope.launch {
-            // Collect the Flow when the lifecycle is at least STARTED
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.characterFlow.collect { data ->
-                    if (data is CharacterDetailViewModel.CharacterDetailUiState.Loading) {
+                    if (data?.isLoading == true) {
                         binding.loadingView.show()
                     } else {
-                        if (data is CharacterDetailViewModel.CharacterDetailUiState.Success) {
+                        if (data?.feed != null) {
                             binding.tvTitle.text = data.feed.name
                             val requestOption = RequestOptions().transform(CenterInside(), RoundedCorners(16))
                             Glide.with(requireContext())
@@ -60,8 +59,12 @@ class CharacterDetailFragment : Fragment() {
                             binding.tvTitle.text = data.feed.name
                             binding.tvDescription.text = data.feed.description
                             binding.loadingView.hide()
-                        } else if (data is CharacterDetailViewModel.CharacterDetailUiState.Error) {
-                            println("yulianti error ${data.error}")
+                        } else if (data?.error != null) {
+                            Toast.makeText(
+                                requireContext(),
+                                requireContext().getString(data.error.asUiText()),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
                     }
                 }

@@ -4,8 +4,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yulianti.kodytest.data.model.Character
 import com.yulianti.kodytest.data.model.CustomResult
+import com.yulianti.kodytest.data.model.DataError
 import com.yulianti.kodytest.data.repository.CharacterRepository
-import com.yulianti.kodytest.util.asUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,29 +21,22 @@ class CharacterDetailViewModel @Inject constructor(
     val characterFlow: StateFlow<CharacterDetailUiState?> = _characterFlow.asStateFlow()
     fun getCharacterDetail(id: Int) {
         viewModelScope.launch {
-            _characterFlow.emit(CharacterDetailUiState.Loading)
-            val result = repository.getCharacterDetail(id)
-            when (result) {
+            _characterFlow.emit(CharacterDetailUiState(isLoading = true))
+            when (val result = repository.getCharacterDetail(id)) {
                 is CustomResult.Success -> {
-                    _characterFlow.emit(CharacterDetailUiState.Success(result.data))
+                    _characterFlow.emit(CharacterDetailUiState(isLoading = false, feed = result.data))
                 }
                 is CustomResult.Error -> {
-                    _characterFlow.emit(CharacterDetailUiState.Error(result.error.asUiText()))
+                    _characterFlow.emit(CharacterDetailUiState(isLoading = false, error = result.error))
                 }
             }
         }
     }
 
-    sealed interface CharacterDetailUiState {
-        data object Loading : CharacterDetailUiState
-
-        data class Success(
-            val feed: Character,
-        ) : CharacterDetailUiState
-
-        data class Error(
-            val error: Int
-        ): CharacterDetailUiState
-    }
+    data class CharacterDetailUiState(
+        val feed: Character? = null,
+        val isLoading: Boolean = false,
+        val error: DataError? = null
+    )
 
 }
