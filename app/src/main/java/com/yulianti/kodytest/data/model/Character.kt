@@ -19,45 +19,13 @@ data class Data(
 )
 
 data class Result(
-    val comics: Comics,
     val description: String,
-    val events: Events,
     val id: Int,
     val modified: String,
     val name: String,
     val resourceURI: String,
-    val series: Series,
-    val stories: Stories,
     val thumbnail: Thumbnail,
     val urls: List<Url>
-)
-
-data class Comics(
-    val available: Int,
-    val collectionURI: String,
-    val items: List<Item>,
-    val returned: Int
-)
-
-data class Events(
-    val available: Int,
-    val collectionURI: String,
-    val items: List<Item>,
-    val returned: Int
-)
-
-data class Series(
-    val available: Int,
-    val collectionURI: String,
-    val items: List<Item>,
-    val returned: Int
-)
-
-data class Stories(
-    val available: Int,
-    val collectionURI: String,
-    val items: List<ItemXXX>,
-    val returned: Int
 )
 
 data class Thumbnail(
@@ -70,17 +38,6 @@ data class Url(
     val url: String
 )
 
-
-data class Item(
-    val name: String,
-    val resourceURI: String
-)
-
-data class ItemXXX(
-    val name: String,
-    val resourceURI: String,
-    val type: String
-)
 data class Character (
     val id: Int,
     val name: String,

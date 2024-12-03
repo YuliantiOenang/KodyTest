@@ -1,4 +1,4 @@
-package com.yulianti.kodytest
+package com.yulianti.kodytest.repository
 
 import com.yulianti.kodytest.data.datasource.local.LocalCharacterDataSource
 import com.yulianti.kodytest.data.datasource.network.NetworkChecker
@@ -6,6 +6,12 @@ import com.yulianti.kodytest.data.datasource.network.NetworkDataSource
 import com.yulianti.kodytest.data.model.CustomResult
 import com.yulianti.kodytest.data.model.DataError
 import com.yulianti.kodytest.data.repository.ImplCharacterRepository
+import com.yulianti.kodytest.errorCharacterDetail
+import com.yulianti.kodytest.errorResult
+import com.yulianti.kodytest.sampleCharacter
+import com.yulianti.kodytest.samplePaginatedResult
+import com.yulianti.kodytest.successCharacterDetailResult
+import com.yulianti.kodytest.successCharacterListResult
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import io.mockk.coEvery

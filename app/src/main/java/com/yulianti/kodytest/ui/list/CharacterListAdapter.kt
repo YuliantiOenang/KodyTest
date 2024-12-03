@@ -1,4 +1,4 @@
-package com.yulianti.kodytest.ui
+package com.yulianti.kodytest.ui.list
 
 import android.annotation.SuppressLint
 import android.view.LayoutInflater

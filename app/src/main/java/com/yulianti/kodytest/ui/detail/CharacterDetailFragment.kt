@@ -1,4 +1,4 @@
-package com.yulianti.kodytest.ui
+package com.yulianti.kodytest.ui.detail
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -16,7 +16,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.bumptech.glide.request.RequestOptions
 import com.yulianti.kodytest.databinding.FragmentCharacterDetailBinding
-import com.yulianti.kodytest.ui.viewmodel.CharacterDetailViewModel
 import com.yulianti.kodytest.util.asUiText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

@@ -1,4 +1,4 @@
-package com.yulianti.kodytest.ui.viewmodel
+package com.yulianti.kodytest.ui.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

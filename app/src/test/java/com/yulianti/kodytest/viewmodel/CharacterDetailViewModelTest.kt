@@ -1,11 +1,14 @@
-package com.yulianti.kodytest
+package com.yulianti.kodytest.viewmodel
 
 import app.cash.turbine.test
 import com.yulianti.kodytest.data.model.Character
 import com.yulianti.kodytest.data.model.CustomResult
 import com.yulianti.kodytest.data.model.DataError
 import com.yulianti.kodytest.data.repository.CharacterRepository
-import com.yulianti.kodytest.ui.viewmodel.CharacterDetailViewModel
+import com.yulianti.kodytest.errorCharacterDetail
+import com.yulianti.kodytest.sampleCharacter
+import com.yulianti.kodytest.successCharacterDetailResult
+import com.yulianti.kodytest.ui.detail.CharacterDetailViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -42,9 +45,17 @@ class CharacterDetailViewModelTest {
         viewModel.getCharacterDetail(1)
         viewModel.characterFlow.test {
             assertEquals(null, awaitItem())
-            assertEquals(CharacterDetailViewModel.CharacterDetailUiState(isLoading = true), awaitItem())
+            assertEquals(
+                CharacterDetailViewModel.CharacterDetailUiState(isLoading = true),
+                awaitItem()
+            )
             testDispatcher.scheduler.advanceUntilIdle()
-            assertEquals(CharacterDetailViewModel.CharacterDetailUiState(isLoading = false, feed = sampleCharacter), awaitItem())
+            assertEquals(
+                CharacterDetailViewModel.CharacterDetailUiState(
+                    isLoading = false,
+                    feed = sampleCharacter
+                ), awaitItem()
+            )
             cancelAndIgnoreRemainingEvents()
         }
     }
@@ -55,7 +66,10 @@ class CharacterDetailViewModelTest {
         viewModel.getCharacterDetail(1)
         viewModel.characterFlow.test {
             assertEquals(null, awaitItem())
-            assertEquals(CharacterDetailViewModel.CharacterDetailUiState(isLoading = true), awaitItem())
+            assertEquals(
+                CharacterDetailViewModel.CharacterDetailUiState(isLoading = true),
+                awaitItem()
+            )
             testDispatcher.scheduler.advanceUntilIdle()
             assertEquals(
                 CharacterDetailViewModel.CharacterDetailUiState(

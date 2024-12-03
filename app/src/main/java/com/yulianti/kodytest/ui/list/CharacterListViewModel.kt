@@ -1,4 +1,4 @@
-package com.yulianti.kodytest.ui.viewmodel
+package com.yulianti.kodytest.ui.list
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -8,7 +8,6 @@ import com.yulianti.kodytest.data.model.DataError
 import com.yulianti.kodytest.data.model.PaginatedResult
 import com.yulianti.kodytest.data.repository.CharacterRepository
 import com.yulianti.kodytest.di.RequestLimit
-import com.yulianti.kodytest.util.asUiText
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

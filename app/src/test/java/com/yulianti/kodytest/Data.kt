@@ -37,12 +37,15 @@ val sampleLoadMoreResult = PaginatedResult(
 
 // CustomResult success and error instances
 val successCharacterListResult: CustomResult<PaginatedResult<Character>, DataError> = CustomResult.Success(
-    samplePaginatedResult)
+    samplePaginatedResult
+)
 
 val successLoadMoreResult: CustomResult<PaginatedResult<Character>, DataError> = CustomResult.Success(
-    sampleLoadMoreResult)
+    sampleLoadMoreResult
+)
 val errorResult: CustomResult<PaginatedResult<Character>, DataError> = CustomResult.Error(DataError.Network.SERVER_ERROR)
 
 val successCharacterDetailResult: CustomResult<Character, DataError> = CustomResult.Success(
-    sampleCharacter)
+    sampleCharacter
+)
 val errorCharacterDetail: CustomResult<Character, DataError> = CustomResult.Error(DataError.Network.SERVER_ERROR)

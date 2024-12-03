@@ -57,7 +57,7 @@ class NetworkCharacterDataSource @Inject constructor(private val service: Charac
         }
     }
 
-    fun toMap(
+    private fun toMap(
         name: String?,
         ts: String,
         apiKey: String,

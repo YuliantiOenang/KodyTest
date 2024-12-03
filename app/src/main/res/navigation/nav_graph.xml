@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/CharacterListFragment"
-        android:name="com.yulianti.kodytest.ui.CharacterListFragment"
+        android:name="com.yulianti.kodytest.ui.list.CharacterListFragment"
         android:label="@string/character_list"
         tools:layout="@layout/fragment_character_list">
 
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/CharacterDetailFragment"
-        android:name="com.yulianti.kodytest.ui.CharacterDetailFragment"
+        android:name="com.yulianti.kodytest.ui.detail.CharacterDetailFragment"
         android:label="@string/character_detail"
         tools:layout="@layout/fragment_character_detail">
         <argument

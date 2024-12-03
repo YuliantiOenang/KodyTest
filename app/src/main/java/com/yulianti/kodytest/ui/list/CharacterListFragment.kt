@@ -1,4 +1,4 @@
-package com.yulianti.kodytest.ui
+package com.yulianti.kodytest.ui.list
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -14,7 +14,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.yulianti.kodytest.databinding.FragmentCharacterListBinding
-import com.yulianti.kodytest.ui.viewmodel.CharacterListViewModel
 import com.yulianti.kodytest.util.asUiText
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch

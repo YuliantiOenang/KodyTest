@@ -1,10 +1,12 @@
+package com.yulianti.kodytest.viewmodel
+
 import app.cash.turbine.test
 import com.yulianti.kodytest.data.model.CustomResult
 import com.yulianti.kodytest.data.repository.CharacterRepository
 import com.yulianti.kodytest.errorResult
 import com.yulianti.kodytest.successCharacterListResult
 import com.yulianti.kodytest.successLoadMoreResult
-import com.yulianti.kodytest.ui.viewmodel.CharacterListViewModel
+import com.yulianti.kodytest.ui.list.CharacterListViewModel
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
