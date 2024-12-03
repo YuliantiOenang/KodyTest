@@ -123,4 +123,26 @@ class CharacterListViewModelTest {
             cancelAndIgnoreRemainingEvents()
         }
     }
+
+    @Test
+    fun `test empty when the list is empty`() = runTest(testDispatcher) {
+        coEvery { repository.getCharacter(any(), any(), any()) } returns successCharacterListResult
+
+        viewModel.getCharacter()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals(false, viewModel.isEmpty())
+
+        coEvery { repository.getCharacter(any(), any(), any()) } returns errorResult
+        viewModel.loadMore()
+        testDispatcher.scheduler.advanceUntilIdle()
+
+        assertEquals(false, viewModel.isEmpty())
+        viewModel.characterFlow.test {
+            val state = awaitItem()
+            assertEquals((successCharacterListResult as CustomResult.Success).data.items.size, state?.items?.items?.size)
+            cancelAndIgnoreRemainingEvents()
+        }
+
+    }
 }

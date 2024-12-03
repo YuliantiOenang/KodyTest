@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.yulianti.kodytest.R
 import com.yulianti.kodytest.databinding.FragmentCharacterListBinding
 import com.yulianti.kodytest.util.asUiText
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,20 +60,28 @@ class CharacterListFragment : Fragment() {
             viewLifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.characterFlow
                     .collect { data ->
-                    if (data?.isLoading == true) {
-                        binding.loadingView.show()
-                    } else {
-                        binding.loadingView.hide()
-                        if (data?.error != null) {
-                            Toast.makeText(requireContext(), requireContext().getString(data.error.asUiText()), Toast.LENGTH_SHORT).show()
-                            println("yulianti error dari list ${data.error}")
+                        if (data?.isLoading == true) {
+                            binding.loadingView.show()
                         } else {
-                            println("yulianti items not empty")
-                            _adapter?.submitList(data?.items?.items)
-                            binding.recyclerView.visibility = View.VISIBLE
+                            binding.loadingView.hide()
+                            if (data?.error != null) {
+                                Toast.makeText(
+                                    requireContext(),
+                                    requireContext().getString(data.error.asUiText()),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                if (viewModel.isEmpty()) {
+                                    Toast.makeText(
+                                        requireContext(),
+                                        requireContext().getString(R.string.empty_list),
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                                _adapter?.submitList(data?.items?.items)
+                            }
                         }
                     }
-                }
             }
         }
 
@@ -85,15 +94,10 @@ class CharacterListFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String): Boolean {
+                if (newText.isEmpty()) {
+                    performSearch("")
+                }
                 return false
-            }
-        })
-
-        binding.searchView.setOnCloseListener(object : SearchView.OnCloseListener{
-            override fun onClose(): Boolean {
-                println("yulianti close clicked")
-                keyword = ""
-                return true
             }
         })
 
@@ -101,10 +105,10 @@ class CharacterListFragment : Fragment() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 (recyclerView.layoutManager as? LinearLayoutManager)?.let { layoutManager ->
-                    val lastVisibleItemPosition: Int = layoutManager.findLastCompletelyVisibleItemPosition()
+                    val lastVisibleItemPosition: Int =
+                        layoutManager.findLastCompletelyVisibleItemPosition()
                     val totalItemCount = layoutManager.itemCount
-                    if (lastVisibleItemPosition + 1 == totalItemCount && !(viewModel.characterFlow.value?.isLoading == true) && !viewModel.isAllDataLoaded()) {
-                        println("yulianti load more")
+                    if (lastVisibleItemPosition + 1 == totalItemCount && viewModel.characterFlow.value?.isLoading != true && !viewModel.isAllDataLoaded()) {
                         viewModel.loadMore(keyword)
                     }
                 }
@@ -125,7 +129,6 @@ class CharacterListFragment : Fragment() {
     }
 
     private fun performSearch(query: String) {
-        Timber.d("yulianti perform search ${query}")
         keyword = query
     }
 }

@@ -6,4 +6,5 @@
     <string name="search_hint">Enter your character here!</string>
     <string name="no_internet_connection">No internet!</string>
     <string name="unknown">Unknown</string>
+    <string name="empty_list">Data is empty</string>
 </resources>

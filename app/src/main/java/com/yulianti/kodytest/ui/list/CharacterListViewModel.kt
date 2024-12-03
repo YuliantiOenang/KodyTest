@@ -98,6 +98,10 @@ class CharacterListViewModel @Inject constructor(
         return _characterFlow.value?.items?.totalSize == servingItem
     }
 
+    fun isEmpty(): Boolean {
+        return _characterFlow.value?.items?.items?.isEmpty() == true
+    }
+
     private fun getRequestLimit(): Int {
         val itemSize = _characterFlow.value?.items?.items?.size ?: 0
         return if (requestLimit > itemSize && itemSize != 0) {
