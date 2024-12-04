@@ -1,11 +1,10 @@
 <resources>
     <string name="app_name">KodyTest</string>
-    <!-- Strings used for fragments for navigation -->
     <string name="character_list">Character List</string>
     <string name="character_detail">Character Detail</string>
     <string name="search_hint">Enter your character here!</string>
     <string name="no_internet_connection">No internet!</string>
-    <string name="unknown">Unknown</string>
-    <string name="empty_list">Data is empty</string>
+    <string name="unknown">Error fetching data</string>
+    <string name="empty_list">No results found</string>
     <string name="disk_full">Disk is full</string>
 </resources>
