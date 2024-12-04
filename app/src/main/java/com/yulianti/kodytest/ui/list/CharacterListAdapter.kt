@@ -35,11 +35,8 @@ class CharacterListAdapter: ListAdapter<Character, CharacterListAdapter.Characte
             }
 
             binding.root.setOnClickListener { view ->
-//                CharacterListFragment
-//
                 val action = CharacterListFragmentDirections.actionListFragmentToDetailFragment(character.id)
                 view.findNavController().navigate(action)
-//                findNavController().navigate(R.id.action_SecondFragment_to_FirstFragment)
             }
         }
     }

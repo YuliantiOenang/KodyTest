@@ -111,7 +111,7 @@ class CharacterListViewModel @Inject constructor(
 
     fun onScroll(lastVisibleItemPosition: Int, totalItemCount: Int, keyword: String?) {
         if (lastVisibleItemPosition + 1 == totalItemCount &&
-            _characterFlow.value?.isLoading != true && isAllDataLoaded()
+            _characterFlow.value?.isLoading != true && !isAllDataLoaded()
         ) {
             loadMore(keyword)
         }
