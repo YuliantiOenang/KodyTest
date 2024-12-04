@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-
 @HiltViewModel
 class CharacterListViewModel @Inject constructor(
     private val repository: CharacterRepository,
@@ -23,25 +22,39 @@ class CharacterListViewModel @Inject constructor(
 ) : ViewModel() {
     private val _characterFlow = MutableStateFlow<CharacterUiState?>(null)
     val characterFlow: StateFlow<CharacterUiState?> = _characterFlow.asStateFlow()
-    private var servingItem = 0;
+    private var servingItem = 0
     private var currentOffset = 0
     private var totalRequest = 0
 
-
     fun getCharacter(keyword: String? = null, offset: Int = 0) {
         viewModelScope.launch {
-            _characterFlow.value = CharacterUiState(isLoading = true)
+            _characterFlow.update { currentState ->
+                CharacterUiState(
+                    items = currentState?.items ?: PaginatedResult(listOf(), 0, 0, 0),
+                    isLoading = true
+                )
+            }
 
             when (val result = repository.getCharacter(keyword, getRequestLimit(), offset)) {
                 is CustomResult.Error -> {
-                    _characterFlow.value = CharacterUiState(isLoading = false, error = result.error)
+                    _characterFlow.update { currentState ->
+                        currentState?.copy(
+                            isLoading = false,
+                            error = result.error
+                        )
+                    }
                 }
 
                 is CustomResult.Success -> {
                     currentOffset = getRequestLimit()
                     totalRequest = 1
                     servingItem = result.data.items.size
-                    _characterFlow.value = CharacterUiState(isLoading = false, items = result.data)
+                    _characterFlow.update { currentState ->
+                        CharacterUiState(
+                            isLoading = false,
+                            items = result.data
+                        )
+                    }
                 }
             }
         }
@@ -49,57 +62,59 @@ class CharacterListViewModel @Inject constructor(
 
     fun loadMore(keyword: String? = null) {
         viewModelScope.launch {
+            // Update loading state while preserving current items
             _characterFlow.update { currentState ->
                 currentState?.copy(
                     isLoading = true
                 )
             }
+
             currentOffset = totalRequest * getRequestLimit()
-            val result = repository.getCharacter(keyword, getRequestLimit(), currentOffset)
-            when (result) {
+            when (val result = repository.getCharacter(keyword, getRequestLimit(), currentOffset)) {
                 is CustomResult.Error -> {
                     _characterFlow.update { currentState ->
                         currentState?.copy(
+                            isLoading = false,
                             error = result.error
                         )
                     }
                 }
-
                 is CustomResult.Success -> {
                     servingItem += result.data.items.size
                     totalRequest += 1
-                    val previousData =
-                        _characterFlow.value?.items ?: PaginatedResult(listOf(), 0, 0, 0)
-                    val newData = previousData.items + result.data.items
+                    val currentItems = _characterFlow.value?.items?.items ?: listOf()
+                    val newItems = currentItems + result.data.items
+
                     _characterFlow.update { currentState ->
                         currentState?.copy(
+                            isLoading = false,
                             items = PaginatedResult(
-                                newData,
+                                newItems,
                                 result.data.totalSize,
                                 result.data.offset,
                                 result.data.count
                             )
                         )
                     }
-                    _characterFlow.value = CharacterUiState(
-                        items = PaginatedResult(
-                            newData,
-                            result.data.totalSize,
-                            result.data.offset,
-                            result.data.count
-                        )
-                    )
                 }
             }
         }
     }
 
-    fun isAllDataLoaded(): Boolean {
+    private fun isAllDataLoaded(): Boolean {
         return _characterFlow.value?.items?.totalSize == servingItem
     }
 
     fun isEmpty(): Boolean {
         return _characterFlow.value?.items?.items?.isEmpty() == true
+    }
+
+    fun onScroll(lastVisibleItemPosition: Int, totalItemCount: Int, keyword: String?) {
+        if (lastVisibleItemPosition + 1 == totalItemCount &&
+            _characterFlow.value?.isLoading != true && isAllDataLoaded()
+        ) {
+            loadMore(keyword)
+        }
     }
 
     private fun getRequestLimit(): Int {

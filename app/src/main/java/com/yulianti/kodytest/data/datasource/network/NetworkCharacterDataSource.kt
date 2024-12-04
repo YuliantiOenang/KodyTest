@@ -75,7 +75,7 @@ class NetworkCharacterDataSource @Inject constructor(private val service: Charac
             )
         } else {
             mutableMapOf(
-                "name" to name,
+                "nameStartsWith" to name,
                 "ts" to ts,
                 "apikey" to apiKey,
                 "hash" to hash,

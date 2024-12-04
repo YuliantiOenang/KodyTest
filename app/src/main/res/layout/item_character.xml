@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/item_background_color"
     android:padding="@dimen/margin_normal">
 
     <androidx.appcompat.widget.AppCompatImageView
@@ -26,6 +27,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imgCover"
         app:layout_constraintTop_toTopOf="parent"
+        android:textColor="?attr/colorOnSurface"
+        style="@style/TextAppearance.Material3.BodyLarge"
         tools:text="title" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

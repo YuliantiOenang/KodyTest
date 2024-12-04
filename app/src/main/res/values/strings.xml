@@ -7,4 +7,5 @@
     <string name="no_internet_connection">No internet!</string>
     <string name="unknown">Unknown</string>
     <string name="empty_list">Data is empty</string>
+    <string name="disk_full">Disk is full</string>
 </resources>

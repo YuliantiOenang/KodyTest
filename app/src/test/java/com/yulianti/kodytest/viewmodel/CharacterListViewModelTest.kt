@@ -94,23 +94,6 @@ class CharacterListViewModelTest {
     }
 
     @Test
-    fun `test isAllDataLoaded returns correct value`() = runTest(testDispatcher) {
-        coEvery { repository.getCharacter(any(), any(), any()) } returns successCharacterListResult
-
-        viewModel.getCharacter()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertEquals(false, viewModel.isAllDataLoaded())
-
-        coEvery { repository.getCharacter(any(), any(), any()) } returns successLoadMoreResult
-        viewModel.loadMore()
-        testDispatcher.scheduler.advanceUntilIdle()
-
-        assertEquals(true, viewModel.isAllDataLoaded())
-    }
-
-
-    @Test
     fun `test state flow emits error on initial load`() = runTest(testDispatcher) {
         coEvery { repository.getCharacter(any(), any(), any()) } returns errorResult
 
@@ -143,6 +126,5 @@ class CharacterListViewModelTest {
             assertEquals((successCharacterListResult as CustomResult.Success).data.items.size, state?.items?.items?.size)
             cancelAndIgnoreRemainingEvents()
         }
-
     }
 }

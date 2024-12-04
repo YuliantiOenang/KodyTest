@@ -66,49 +66,50 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
+    implementation(libs.androidx.animation.core.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
-    implementation("com.google.dagger:hilt-android:2.51.1")
-    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.9.3")
-    implementation ("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
-    implementation("com.github.bumptech.glide:glide:4.15.1")
-    kapt("com.github.bumptech.glide:compiler:4.15.1")
-    implementation("androidx.recyclerview:recyclerview:1.2.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    implementation(libs.hilt.android)
+    kapt(libs.hilt.android.compiler)
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation (libs.logging.interceptor)
+    implementation (libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    kapt(libs.androidx.room.compiler)
+    implementation(libs.glide)
+    kapt(libs.compiler)
+    implementation(libs.androidx.recyclerview)
+    implementation(libs.kotlinx.serialization.json)
 
 
     // Unit Testing with JUnit
-    testImplementation("junit:junit:4.13.2")
+    testImplementation(libs.junit)
 
     // Kotlin Coroutines Test library
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.4")
+    testImplementation(libs.kotlinx.coroutines.test)
 
     // MockK library for mocking
-    testImplementation("io.mockk:mockk:1.12.0")
+    testImplementation(libs.mockk)
     // If you prefer Mockito, use the following line instead:
     // testImplementation("org.mockito:mockito-core:4.0.0")
 
     // Turbine library for testing Flows
-    testImplementation("app.cash.turbine:turbine:0.12.1")
+    testImplementation(libs.turbine)
 
     // AndroidX Test libraries
-    testImplementation("androidx.test:core:1.5.0")
-    testImplementation("androidx.test.ext:junit:1.1.5")
+    testImplementation(libs.androidx.core)
+    testImplementation(libs.androidx.junit.v115)
 
     // Core Testing library for LiveData and ViewModel
-    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation(libs.androidx.core.testing)
 
     // (Optional) AndroidX Test Runner and Rules if needed
-    androidTestImplementation("androidx.test:runner:1.5.2")
-    androidTestImplementation("androidx.test:rules:1.5.0")
+    androidTestImplementation(libs.androidx.runner)
+    androidTestImplementation(libs.androidx.rules)
 
-    implementation("com.jakewharton.timber:timber:5.0.1")
+    implementation(libs.timber)
 }
 
 fun fetchKeys(): Pair<String, String> {
