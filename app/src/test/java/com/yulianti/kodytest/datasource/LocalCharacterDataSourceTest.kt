@@ -43,8 +43,8 @@ class LocalCharacterDataSourceTest {
 
         assertTrue(result is CustomResult.Success)
         val success = result as CustomResult.Success
-        assertEquals(2, success.data.size)
-        assertEquals("John Doe", success.data[0].name)
+        assertEquals(2, success.data.items.size)
+        assertEquals("John Doe", success.data.items[0].name)
         coVerify { characterDao.getAllCharacters() }
     }
 
@@ -59,8 +59,8 @@ class LocalCharacterDataSourceTest {
 
         assertTrue(result is CustomResult.Success)
         val success = result as CustomResult.Success
-        assertEquals(1, success.data.size)
-        assertEquals("Filtered Name", success.data[0].name)
+        assertEquals(1, success.data.items.size)
+        assertEquals("Filtered Name", success.data.items[0].name)
         coVerify { characterDao.getCharacterByQuery("Filtered") }
     }
 

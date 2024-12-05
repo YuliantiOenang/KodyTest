@@ -22,15 +22,15 @@ import org.junit.Assert.assertEquals
 
 class CharacterRepositoryTest {
 
-
     private val remoteDataSource: NetworkDataSource = mockk()
     private val localDataSource: LocalCharacterDataSource = mockk()
     private val networkUtil: NetworkChecker = mockk()
     private val testDispatcher = StandardTestDispatcher()
-    private val repository = ImplCharacterRepository(localDataSource, remoteDataSource, networkUtil, testDispatcher)
+    private val repository =
+        ImplCharacterRepository(localDataSource, remoteDataSource, networkUtil, testDispatcher)
 
     @Test
-    fun `getCharacter returns success result`() = runTest(testDispatcher) {
+    fun `getCharacter returns success result from network`() = runTest(testDispatcher) {
         val name = "Test"
         val limit = 10
         val offset = 0
@@ -43,7 +43,7 @@ class CharacterRepositoryTest {
             remoteDataSource.fetchCharacters(name, limit, offset)
         } returns successCharacterListResult
 
-        coEvery { localDataSource.saveCharacter(any()) } returns  CustomResult.Success(Unit)
+        coEvery { localDataSource.saveCharacter(any()) } returns CustomResult.Success(Unit)
 
         val result = repository.getCharacter(name, limit, offset)
 
@@ -52,6 +52,26 @@ class CharacterRepositoryTest {
 
         // Verify
         coVerify { remoteDataSource.fetchCharacters(name, limit, offset) }
+    }
+
+    @Test
+    fun `getCharacter returns success result from local`() = runTest(testDispatcher) {
+        val name = "Test"
+        val limit = 10
+        val offset = 0
+
+        coEvery {
+            networkUtil.isNetworkAvailable()
+        } returns false
+
+        coEvery { localDataSource.getAllCharacter(any()) } returns successCharacterListResult
+
+        val result = repository.getCharacter(name, limit, offset)
+
+        assert(result is CustomResult.Success)
+        assertEquals(samplePaginatedResult, (result as CustomResult.Success).data)
+
+        coVerify { localDataSource.getAllCharacter(name) }
     }
 
     @Test

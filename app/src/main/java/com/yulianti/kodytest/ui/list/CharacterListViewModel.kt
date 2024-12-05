@@ -15,6 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 @HiltViewModel
 class CharacterListViewModel @Inject constructor(
     private val repository: CharacterRepository,

@@ -35,12 +35,8 @@ class ImplCharacterRepository @Inject constructor(
                 }
 
             } else {
-                val resultPaginatedList = PaginatedResult(
-                    (localDataSource.getAllCharacter(name) as CustomResult.Success).data,
-                    0,
-                    0,
-                    0
-                )
+                val resultPaginatedList =
+                    (localDataSource.getAllCharacter(name) as CustomResult.Success).data
                 result = CustomResult.Success(resultPaginatedList)
             }
         }

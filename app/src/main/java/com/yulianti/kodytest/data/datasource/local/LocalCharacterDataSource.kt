@@ -16,7 +16,7 @@ class LocalCharacterDataSource @Inject constructor(
 ) {
     suspend fun getAllCharacter(
         name: String?
-    ): CustomResult<List<Character>, DataError> {
+    ): CustomResult<PaginatedResult<Character>, DataError> {
         return try {
             val result = withContext(Dispatchers.IO) {
                 if (name?.isNotEmpty() == true) {
@@ -39,7 +39,8 @@ class LocalCharacterDataSource @Inject constructor(
                     }
                 }
             }
-            CustomResult.Success(result)
+            val paginatedResult = PaginatedResult(result, 0,0,0)
+            CustomResult.Success(paginatedResult)
         } catch(e: Exception) {
             CustomResult.Error(DataError.Local.UNKNOWN)
         }
