@@ -23,9 +23,6 @@ class CharacterListViewModel @Inject constructor(
 ) : ViewModel() {
     private val _characterFlow = MutableStateFlow<CharacterUiState?>(null)
     val characterFlow: StateFlow<CharacterUiState?> = _characterFlow.asStateFlow()
-    private var servingItem = 0
-    private var currentOffset = 0
-    private var totalRequest = 0
 
     fun getCharacter(keyword: String? = null, offset: Int = 0) {
         viewModelScope.launch {
@@ -36,7 +33,7 @@ class CharacterListViewModel @Inject constructor(
                 )
             }
 
-            when (val result = repository.getCharacter(keyword, getRequestLimit(), offset)) {
+            when (val result = repository.getCharacter(keyword, requestLimit, offset)) {
                 is CustomResult.Error -> {
                     _characterFlow.update { currentState ->
                         currentState?.copy(
@@ -47,10 +44,7 @@ class CharacterListViewModel @Inject constructor(
                 }
 
                 is CustomResult.Success -> {
-                    currentOffset = getRequestLimit()
-                    totalRequest = 1
-                    servingItem = result.data.items.size
-                    _characterFlow.update { currentState ->
+                    _characterFlow.update { _ ->
                         CharacterUiState(
                             isLoading = false,
                             items = result.data
@@ -69,9 +63,8 @@ class CharacterListViewModel @Inject constructor(
                     isLoading = true
                 )
             }
-
-            currentOffset = totalRequest * getRequestLimit()
-            when (val result = repository.getCharacter(keyword, getRequestLimit(), currentOffset)) {
+            val currentData = _characterFlow.value?.items?.items?.size
+            when (val result = repository.getCharacter(keyword, requestLimit, currentData ?: 0)) {
                 is CustomResult.Error -> {
                     _characterFlow.update { currentState ->
                         currentState?.copy(
@@ -80,9 +73,8 @@ class CharacterListViewModel @Inject constructor(
                         )
                     }
                 }
+
                 is CustomResult.Success -> {
-                    servingItem += result.data.items.size
-                    totalRequest += 1
                     val currentItems = _characterFlow.value?.items?.items ?: listOf()
                     val newItems = currentItems + result.data.items
 
@@ -103,7 +95,7 @@ class CharacterListViewModel @Inject constructor(
     }
 
     private fun isAllDataLoaded(): Boolean {
-        return _characterFlow.value?.items?.totalSize == servingItem
+        return _characterFlow.value?.items?.totalSize == _characterFlow.value?.items?.items?.size
     }
 
     fun isEmpty(): Boolean {
@@ -115,15 +107,6 @@ class CharacterListViewModel @Inject constructor(
             _characterFlow.value?.isLoading != true && !isAllDataLoaded()
         ) {
             loadMore(keyword)
-        }
-    }
-
-    private fun getRequestLimit(): Int {
-        val itemSize = _characterFlow.value?.items?.items?.size ?: 0
-        return if (requestLimit > itemSize && itemSize != 0) {
-            itemSize
-        } else {
-            requestLimit
         }
     }
 

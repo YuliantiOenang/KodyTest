@@ -49,10 +49,12 @@ class CharacterListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        if (_adapter == null) {
+            viewModel.getCharacter()
+        }
         setupRecyclerViews()
         setupSearchBar()
         setupDataCollection()
-        viewModel.getCharacter() // Initial data load
     }
 
     override fun onResume() {
@@ -68,10 +70,12 @@ class CharacterListFragment : Fragment() {
 
     private fun resetSearchState() {
         with(binding) {
-            searchView.hide()
-            searchBar.setText("")
-            searchView.editText.setText("")
-            performSearch("")
+            if (searchView.isShowing) {
+                searchView.hide()
+                searchBar.setText("")
+                searchView.editText.setText("")
+                performSearch("")
+            }
         }
     }
 
